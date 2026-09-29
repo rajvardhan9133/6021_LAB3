@@ -42,6 +42,27 @@ class ResultsVisualizer:
     """
 
     def image_grid(self, images, titles=None, **kwargs):
+        titles = []
+        for i in range(len(images)):
+            titles.append(f"Image {i + 1}")
+        suptitle = kwargs.get("suptitle", "")
+        height = kwargs.get("height", 350)
+        figure = make_subplots(rows=1, cols=len(images), subplot_titles=titles)
+
+        for col, image in enumerate(images, start=1):
+            figure.add_trace(
+                 go.Image(z=image),
+                 row=1,
+                 col=col
+                 )
+
+        figure.update_layout(
+            title_text=suptitle,
+            height=height
+             )
+
+        return figure
+    
         """Arrange images side by side in a single figure.
 
         Args:
@@ -56,9 +77,23 @@ class ResultsVisualizer:
             plotly.graph_objects.Figure: Figure with one go.Image panel per
             input image, arranged in a single row.
         """
-        raise NotImplementedError("Implement this method")
+
+        '''raise NotImplementedError("Implement this method")'''
+
 
     def heatmap(self, matrix, **kwargs):
+        title = kwargs.get("title", "")
+        colorscale = kwargs.get("colorscale", "Viridis")
+
+        figure = go.Figure(
+            go.Heatmap(
+                  z=matrix,
+                  colorscale=colorscale
+                  ))
+
+        figure.update_layout(title_text=title)
+
+        return figure
         """Display a 2D numeric array as a heatmap.
 
         Args:
@@ -71,10 +106,34 @@ class ResultsVisualizer:
             plotly.graph_objects.Figure: Figure containing a single
             go.Heatmap trace.
         """
-        raise NotImplementedError("Implement this method")
+        '''raise NotImplementedError("Implement this method")'''
 
     def line_chart(self, x, series, **kwargs):
-        """Plot one or more named series against a shared x-axis.
+
+           title = kwargs.get("title", "")
+           xaxis_title = kwargs.get("xaxis_title", "x")
+           yaxis_title = kwargs.get("yaxis_title", "y")
+
+           figure = go.Figure()
+
+           for name, y in series.items():
+               figure.add_trace(
+                      go.Scatter(
+                            x=x,
+                            y=y,
+                            mode="lines",
+                            name=name
+                                ))
+
+           figure.update_layout(
+           title_text=title,
+           xaxis_title=xaxis_title,
+           yaxis_title=yaxis_title
+              )
+
+           return figure
+    
+           """Plot one or more named series against a shared x-axis.
 
         Args:
             x (array-like): Shared 1D x-axis values.
@@ -87,6 +146,6 @@ class ResultsVisualizer:
 
         Returns:
             plotly.graph_objects.Figure: Figure with one go.Scatter line
-            trace per entry in `series`, with a legend.
-        """
-        raise NotImplementedError("Implement this method")
+            trace per entry in `series`, with a legend."""
+        
+           '''raise NotImplementedError("Implement this method")'''
